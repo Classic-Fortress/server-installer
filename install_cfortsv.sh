@@ -39,26 +39,26 @@ eval directory=$directory
 [ ! -z "$directory" ] || eval directory=$defaultdir
 
 if [ -d "$directory" ]; then
-	if [ -w "$directory" ]; then
-		created=0
-	else
-		error "You do not have write access to '$directory'. Exiting."
-	fi
+    if [ -w "$directory" ]; then
+        created=0
+    else
+        error "You do not have write access to '$directory'. Exiting."
+    fi
 else
-	if [ -e "$directory" ]; then
-		error "'$directory' already exists but is a file, not a directory. Exiting."
-		exit
-	else
-		mkdir -p $directory 2>/dev/null || error "Failed to create install dir: '$directory'"
-		created=1
-	fi
+    if [ -e "$directory" ]; then
+        error "'$directory' already exists but is a file, not a directory. Exiting."
+        exit
+    else
+        mkdir -p $directory 2>/dev/null || error "Failed to create install dir: '$directory'"
+        created=1
+    fi
 fi
 if [ -w "$directory" ]
 then
-	cd $directory
-	directory=$(pwd)
+    cd $directory
+    directory=$(pwd)
 else
-	error "You do not have write access to $directory. Exiting."
+    error "You do not have write access to $directory. Exiting."
 fi
 
 # Hostname
@@ -105,26 +105,26 @@ defaultrcon="changeme"
 printf "What should the rcon password be? [$defaultrcon]: " 
 read rcon
 [ ! -z "$rcon" ] || {
-	echo
-	echo "Your rcon has been set to $defaultrcon. This is an enormous security risk."
-	echo "To change this, edit $directory/fortress/pwd.cfg"
-	echo
-        rcon=$defaultrcon
+    echo
+    echo "Your rcon has been set to $defaultrcon. This is an enormous security risk."
+    echo "To change this, edit $directory/fortress/pwd.cfg"
+    echo
+    rcon=$defaultrcon
 }
 
 if [ "$qtv" = "y" ]
 then
-	# Qtv password
-	defaultqtvpass="changeme"
-	printf "What should the qtv admin password be? [$defaultqtvpass]: " 
-	read qtvpass
-	[ ! -z "$qtvpass" ] || {
-	        echo
-	        echo "Your qtv password has been set to $defaultqtvpass. This is not recommended."
-	        echo "To change this, edit $directory/qtv/qtv.cfg"
-	        echo
-	        qtvpass=$defaultqtvpass
-	}
+    # Qtv password
+    defaultqtvpass="changeme"
+    printf "What should the qtv admin password be? [$defaultqtvpass]: " 
+    read qtvpass
+    [ ! -z "$qtvpass" ] || {
+        echo
+        echo "Your qtv password has been set to $defaultqtvpass. This is not recommended."
+        echo "To change this, edit $directory/qtv/qtv.cfg"
+        echo
+        qtvpass=$defaultqtvpass
+    }
 fi
 
 # Download cfort.ini
@@ -138,16 +138,16 @@ printf "Enter mirror number [random]: "
 read mirror
 mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
 [ -n "$mirror" ] || {
-        echo;echo -n "* Using mirror: "
-        range=$(expr$(grep "[0-9]\{1,2\}=\".*" cfort.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
-        while [ -z "$mirror" ]
-        do
-                number=$RANDOM
-                let "number %= $range"
-                mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
-		mirrorname=$(grep "^$number=\".*" cfort.ini | cut -d "\"" -f2)
-        done
-        echo "$mirrorname"
+    echo;echo -n "* Using mirror: "
+    range=$(expr$(grep "[0-9]\{1,2\}=\".*" cfort.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
+    while [ -z "$mirror" ]
+    do
+        number=$RANDOM
+        let "number %= $range"
+        mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
+        mirrorname=$(grep "^$number=\".*" cfort.ini | cut -d "\"" -f2)
+    done
+    echo "$mirrorname"
 }
 mkdir -p id1
 echo;echo
@@ -225,9 +225,9 @@ printf "* Removing distribution files..."
 printf "* Converting DOS files to UNIX..."
 for file in $(find $directory -iname "*.cfg" -or -iname "*.txt" -or -iname "*.sh" -or -iname "README")
 do
-	[ ! -f "$file" ] || cat $file|tr -d '\015' > tmpfile
-	rm $file
-	mv tmpfile $file
+    [ ! -f "$file" ] || cat $file|tr -d '\015' > tmpfile
+    rm $file
+    mv tmpfile $file
 done
 echo "done"
 
@@ -260,12 +260,12 @@ sed -i "s/CFORTSV_RCON/${safe_pattern}/g" $directory/fortress/pwd.cfg
 #/qtv/qtv.cfg
 if [ "$qtv" = "y" ]
 then
-	safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-	sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/qtv/qtv.cfg
-	safe_pattern=$(printf "%s\n" "$qtvpass" | sed 's/[][\.*^$/]/\\&/g')
-	sed -i "s/CFORTSV_QTVPASS/${safe_pattern}/g" $directory/qtv/qtv.cfg
-	cd qtv
-	ln -s ../fortress/demos demos
+    safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
+    sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/qtv/qtv.cfg
+    safe_pattern=$(printf "%s\n" "$qtvpass" | sed 's/[][\.*^$/]/\\&/g')
+    sed -i "s/CFORTSV_QTVPASS/${safe_pattern}/g" $directory/qtv/qtv.cfg
+    cd qtv
+    ln -s ../fortress/demos demos
 fi
 #/qwfwd/qwfwd.cfg
 if [ "$qwfwd" = "y" ]
@@ -313,54 +313,54 @@ echo "done"
 # Add QTV
 if [ "$qtv" = "y" ]
 then
-	printf "* Adding qtv to start/stop scripts..."
-	# start_servers.sh
-	echo >> $directory/start_servers.sh
-	echo "printf \"* Starting qtv (port 28000)...\"" >> $directory/start_servers.sh
-	echo "if ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" > /dev/null" >> $directory/start_servers.sh
-	echo "then" >> $directory/start_servers.sh
-	echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-	echo "else" >> $directory/start_servers.sh
-	echo "./run/qtv.sh > /dev/null &" >> $directory/start_servers.sh
-	echo "echo \"[OK]\"" >> $directory/start_servers.sh
-	echo "fi" >> $directory/start_servers.sh
-	# stop_servers.sh
-	echo >> $directory/stop_servers.sh
-	echo "# Kill QTV" >> $directory/stop_servers.sh
-	echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qtv.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-	echo "pid=\`ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-	echo "done"
+    printf "* Adding qtv to start/stop scripts..."
+    # start_servers.sh
+    echo >> $directory/start_servers.sh
+    echo "printf \"* Starting qtv (port 28000)...\"" >> $directory/start_servers.sh
+    echo "if ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" > /dev/null" >> $directory/start_servers.sh
+    echo "then" >> $directory/start_servers.sh
+    echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
+    echo "else" >> $directory/start_servers.sh
+    echo "./run/qtv.sh > /dev/null &" >> $directory/start_servers.sh
+    echo "echo \"[OK]\"" >> $directory/start_servers.sh
+    echo "fi" >> $directory/start_servers.sh
+    # stop_servers.sh
+    echo >> $directory/stop_servers.sh
+    echo "# Kill QTV" >> $directory/stop_servers.sh
+    echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qtv.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+    echo "pid=\`ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+    echo "done"
 else
-	printf "* Removing qtv files..."
-	(rm -rf $directory/qtv $directory/run/qtv.sh && echo done) || echo fail
+    printf "* Removing qtv files..."
+    (rm -rf $directory/qtv $directory/run/qtv.sh && echo done) || echo fail
 fi
 
 # Add/remove qwfwd
 if [ "$qwfwd" = "y" ]
 then
-	# start_servers.sh
+    # start_servers.sh
         echo -n "* Adding qwfwd to start/stop scripts..."
         echo >> $directory/start_servers.sh
-    	echo "echo -n \"* Starting qwfwd (port 30000)...\"" >> $directory/start_servers.sh
+        echo "echo -n \"* Starting qwfwd (port 30000)...\"" >> $directory/start_servers.sh
         echo "if ps ax | grep -v grep | grep \"qwfwd.bin\" > /dev/null" >> $directory/start_servers.sh
         echo "then" >> $directory/start_servers.sh
         echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
         echo "else" >> $directory/start_servers.sh
         echo "./run/qwfwd.sh > /dev/null &" >> $directory/start_servers.sh
-    	echo "echo \"[OK]\"" >> $directory/start_servers.sh
+        echo "echo \"[OK]\"" >> $directory/start_servers.sh
         echo "fi" >> $directory/start_servers.sh
         # stop_servers.sh
-	echo >> $directory/stop_servers.sh
-	echo "# Kill QWFWD" >> $directory/stop_servers.sh
-	echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qwfwd.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-	echo "pid=\`ps ax | grep -v grep | grep \"qwfwd.bin\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-	echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+    echo >> $directory/stop_servers.sh
+    echo "# Kill QWFWD" >> $directory/stop_servers.sh
+    echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qwfwd.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
+    echo "pid=\`ps ax | grep -v grep | grep \"qwfwd.bin\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
+    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
         echo "done"
 else
-	printf "* Removing qwfwd files..."
+    printf "* Removing qwfwd files..."
         (rm -rf $directory/qwfwd $directory/run/qwfwd.sh && echo done) || echo fail
 fi
 
