@@ -158,13 +158,19 @@ wget --inet4-only -O qsw106.zip $mirror/qsw106.zip || error "Failed to download 
 wget --inet4-only -O cfortsv-gpl.zip $mirror/cfortsv-gpl.zip || error "Failed to download $mirror/cfortsv-gpl.zip"
 wget --inet4-only -O cfortsv-non-gpl.zip $mirror/cfortsv-non-gpl.zip || error "Failed to download $mirror/cfortsv-non-gpl.zip"
 wget --inet4-only -O cfortsv-maps.zip $mirror/cfortsv-maps.zip || error "Failed to download $mirror/cfortsv-maps.zip"
-wget --inet4-only -O cfortsv-bin-x86.zip $mirror/cfortsv-bin-x86.zip || error "Failed to download $mirror/cfortsv-bin-x86.zip"
+if [ $(getconf LONG_BIT) = 64 ]
+then
+    wget --inet4-only -O cfortsv-bin-x64.zip $mirror/cfortsv-bin-x64.zip || error "Failed to download $mirror/cfortsv-bin-x64.zip"
+    [ -s "cfortsv-bin-x64.zip" ] || error "Downloaded cfortsv-bin-x64.zip but file is empty?!"
+else
+    wget --inet4-only -O cfortsv-bin-x86.zip $mirror/cfortsv-bin-x86.zip || error "Failed to download $mirror/cfortsv-bin-x86.zip"
+    [ -s "cfortsv-bin-x86.zip" ] || error "Downloaded cfortsv-bin-x86.zip but file is empty?!"
+fi
 
 [ -s "qsw106.zip" ] || error "Downloaded qwsv106.zip but file is empty?!"
 [ -s "cfortsv-gpl.zip" ] || error "Downloaded cfortsv-gpl.zip but file is empty?!"
 [ -s "cfortsv-non-gpl.zip" ] || error "Downloaded cfortsv-non-gpl.zip but file is empty?!"
 [ -s "cfortsv-maps.zip" ] || error "Downloaded cfortsv-maps.zip but file is empty?!"
-[ -s "cfortsv-bin-x86.zip" ] || error "Downloaded cfortsv-bin-x86.zip but file is empty?!"
 
 # Download configuration files
 mkdir fortress
@@ -205,9 +211,12 @@ printf "* Extracting Classic Fortress setup files (1 of 2)..."
 printf "* Extracting Classic Fortress setup files (2 of 2)..."
 (unzip -qqo cfortsv-non-gpl.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress binaries..."
-(unzip -qqo cfortsv-bin-x86.zip 2>/dev/null && echo done) || echo fail
-printf "* Extracting Classic Fortress configuration files..."
-(unzip -qqo cfortsv-configs.zip 2>/dev/null && echo done) || echo fail
+if [ $(getconf LONG_BIT) = 64 ]
+then
+    (unzip -qqo cfortsv-bin-x64.zip 2>/dev/null && echo done) || echo fail
+else
+    (unzip -qqo cfortsv-bin-x86.zip 2>/dev/null && echo done) || echo fail
+fi
 printf "* Extracting Classic Fortress maps..."
 (unzip -qqo cfortsv-maps.zip 2>/dev/null && echo done) || echo fail
 echo
@@ -219,7 +228,7 @@ printf "* Renaming files..."
 
 # Remove distribution files
 printf "* Removing distribution files..."
-(rm -rf $directory/qsw106.zip $directory/cfortsv-gpl.zip $directory/cfortsv-non-gpl.zip $directory/cfortsv-configs.zip $directory/cfortsv-maps.zip $directory/cfortsv-bin-x86.zip $directory/cfort.ini && echo done) || echo fail
+(rm -rf $directory/qsw106.zip $directory/cfortsv-gpl.zip $directory/cfortsv-non-gpl.zip $directory/cfortsv-maps.zip $directory/cfortsv-bin-x86.zip $directory/cfortsv-bin-x64.zip $directory/cfort.ini && echo done) || echo fail
 
 # Convert DOS files to UNIX
 printf "* Converting DOS files to UNIX..."
