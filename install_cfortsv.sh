@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# nQWTFsv Installer Script v1.0 (for Linux)
+# Classic Fortress Installer Script v1.0 (for Linux)
 # by Empezar & dimman
 
-defaultdir="~/nqwtfsv"
+defaultdir="~/cfortsv"
 eval defaultdir=$defaultdir
 
 error() {
@@ -24,14 +24,14 @@ which unzip >/dev/null || error "The package 'unzip' is not installed. Please in
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the installation again."
 
 echo
-echo "Welcome to the nQWTFsv v1.0 installation"
+echo "Welcome to the Classic Fortress v1.0 installation"
 echo "========================================"
 echo
 echo "Press ENTER to use [default] option."
 echo
 
-# Create the nQWTFsv folder
-printf "Where do you want to install nQWTFsv? [$defaultdir]: " 
+# Create the Classic Fortress folder
+printf "Where do you want to install Classic Fortress? [$defaultdir]: " 
 read directory
 
 eval directory=$directory
@@ -62,7 +62,7 @@ else
 fi
 
 # Hostname
-defaulthostname="nQWTF Team Fortress"
+defaulthostname="Classic Fortress"
 printf "Enter a descriptive hostname [$defaulthostname]: " 
 read hostname
 [ ! -z "$hostname" ] || hostname=$defaulthostname
@@ -127,25 +127,25 @@ then
 	}
 fi
 
-# Download nqwtf.ini
-wget --inet4-only -q -O nqwtf.ini http://nqwtf.sourceforge.net/nqwtf.ini || error "Failed to download nqwtf.ini"
-[ -s "nqwtf.ini" ] || error "Downloaded nqwtf.ini but file is empty?! Exiting."
+# Download cfort.ini
+wget --inet4-only -q -O cfort.ini https://raw.githubusercontent.com/Classic-Fortress/client-installer/master/cfort.ini || error "Failed to download cfort.ini"
+[ -s "cfort.ini" ] || error "Downloaded cfort.ini but file is empty?! Exiting."
 
 # List all the available mirrors
-echo "From what mirror would you like to download nQuakesv?"
-grep "[0-9]\{1,2\}=\".*" nqwtf.ini | cut -d "\"" -f2 | nl
+echo "From what mirror would you like to download Classic Fortress?"
+grep "[0-9]\{1,2\}=\".*" cfort.ini | cut -d "\"" -f2 | nl
 printf "Enter mirror number [random]: " 
 read mirror
-mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" nqwtf.ini | cut -d "=" -f2)
+mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
 [ -n "$mirror" ] || {
         echo;echo -n "* Using mirror: "
-        range=$(expr$(grep "[0-9]\{1,2\}=\".*" nqwtf.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
+        range=$(expr$(grep "[0-9]\{1,2\}=\".*" cfort.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
         while [ -z "$mirror" ]
         do
                 number=$RANDOM
                 let "number %= $range"
-                mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" nqwtf.ini | cut -d "=" -f2)
-		mirrorname=$(grep "^$number=\".*" nqwtf.ini | cut -d "\"" -f2)
+                mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
+		mirrorname=$(grep "^$number=\".*" cfort.ini | cut -d "\"" -f2)
         done
         echo "$mirrorname"
 }
@@ -180,15 +180,15 @@ echo
 echo "=== Installing ==="
 printf "* Extracting Quake Shareware..."
 (unzip -qqo qsw106.zip ID1/PAK0.PAK 2>/dev/null && echo done) || echo fail
-printf "* Extracting nQWTF setup files (1 of 2)..."
+printf "* Extracting Classic Fortress setup files (1 of 2)..."
 (unzip -qqo qwtf-sv-gpl.zip 2>/dev/null && echo done) || echo fail
-printf "* Extracting nQWTF setup files (2 of 2)..."
+printf "* Extracting Classic Fortress setup files (2 of 2)..."
 (unzip -qqo qwtf-sv-non-gpl.zip 2>/dev/null && echo done) || echo fail
-printf "* Extracting nQWTF binaries..."
+printf "* Extracting Classic Fortress binaries..."
 (unzip -qqo qwtf-sv-bin-x86.zip 2>/dev/null && echo done) || echo fail
-printf "* Extracting nQWTF configuration files..."
+printf "* Extracting Classic Fortress configuration files..."
 (unzip -qqo qwtf-sv-configs.zip 2>/dev/null && echo done) || echo fail
-printf "* Extracting nQWTF maps..."
+printf "* Extracting Classic Fortress maps..."
 (unzip -qqo qwtf-sv-maps.zip 2>/dev/null && echo done) || echo fail
 echo
 
@@ -199,7 +199,7 @@ printf "* Renaming files..."
 
 # Remove distribution files
 printf "* Removing distribution files..."
-(rm -rf $directory/qsw106.zip $directory/qwtf-sv-gpl.zip $directory/qwtf-sv-non-gpl.zip $directory/qwtf-sv-configs.zip $directory/qwtf-sv-maps.zip $directory/qwtf-sv-bin-x86.zip $directory/nqwtf.ini && echo done) || echo fail
+(rm -rf $directory/qsw106.zip $directory/qwtf-sv-gpl.zip $directory/qwtf-sv-non-gpl.zip $directory/qwtf-sv-configs.zip $directory/qwtf-sv-maps.zip $directory/qwtf-sv-bin-x86.zip $directory/cfort.ini && echo done) || echo fail
 
 # Convert DOS files to UNIX
 printf "* Converting DOS files to UNIX..."
@@ -225,25 +225,25 @@ echo "done"
 
 # Update configuration files
 printf "* Updating configuration files..."
-mkdir -p ~/.nqwtfsv
-echo $directory > ~/.nqwtfsv/install_dir
-echo $hostname > ~/.nqwtfsv/hostname
-echo $hostdns > ~/.nqwtfsv/hostdns
-echo $remote_ip > ~/.nqwtfsv/ip
-echo "$admin <$email>" > ~/.nqwtfsv/admin
+mkdir -p ~/.cfortsv
+echo $directory > ~/.cfortsv/install_dir
+echo $hostname > ~/.cfortsv/hostname
+echo $hostdns > ~/.cfortsv/hostdns
+echo $remote_ip > ~/.cfortsv/ip
+echo "$admin <$email>" > ~/.cfortsv/admin
 #/start_servers.sh
 safe_pattern=$(printf "%s\n" "$directory" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQWTFSV_PATH/${safe_pattern}/g" $directory/start_servers.sh
+sed -i "s/CFORTSV_PATH/${safe_pattern}/g" $directory/start_servers.sh
 #/ktx/pwd.cfg
 safe_pattern=$(printf "%s\n" "$rcon" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQWTFSV_RCON/${safe_pattern}/g" $directory/fortress/pwd.cfg
+sed -i "s/CFORTSV_RCON/${safe_pattern}/g" $directory/fortress/pwd.cfg
 #/qtv/qtv.cfg
 if [ "$qtv" = "y" ]
 then
 	safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-	sed -i "s/NQWTFSV_HOSTNAME/${safe_pattern}/g" $directory/qtv/qtv.cfg
+	sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/qtv/qtv.cfg
 	safe_pattern=$(printf "%s\n" "$qtvpass" | sed 's/[][\.*^$/]/\\&/g')
-	sed -i "s/NQWTFSV_QTVPASS/${safe_pattern}/g" $directory/qtv/qtv.cfg
+	sed -i "s/CFORTSV_QTVPASS/${safe_pattern}/g" $directory/qtv/qtv.cfg
 	cd qtv
 	ln -s ../fortress/demos demos
 fi
@@ -251,23 +251,23 @@ fi
 if [ "$qwfwd" = "y" ]
 then
         safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/NQWTFSV_HOSTNAME/${safe_pattern}/g" $directory/qwfwd/qwfwd.cfg
+        sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/qwfwd/qwfwd.cfg
 fi
 echo "done"
 
 printf "* Setting up shell scripts..."
 # Fix shell scripts
 safe_pattern=$(printf "%s\n" "./mvdsv -port $port -game fortress" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQWTFSV_RUN_MVDSV/${safe_pattern}/g" $directory/run/fortress.sh
+sed -i "s/CFORTSV_RUN_MVDSV/${safe_pattern}/g" $directory/run/fortress.sh
 # Fix /fortress/port1.cfg
 safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQWTFSV_HOSTNAME/${safe_pattern}/g" $directory/fortress/port1.cfg
+sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/fortress/port1.cfg
 safe_pattern=$(printf "%s\n" "$admin <$email>" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQWTFSV_ADMIN/${safe_pattern}/g" $directory/fortress/port1.cfg
+sed -i "s/CFORTSV_ADMIN/${safe_pattern}/g" $directory/fortress/port1.cfg
 safe_pattern=$(printf "%s\n" "$remote_ip:$port" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQWTFSV_IP/${safe_pattern}/g" $directory/fortress/port1.cfg
+sed -i "s/CFORTSV_IP/${safe_pattern}/g" $directory/fortress/port1.cfg
 safe_pattern=$(printf "%s\n" "$port" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/NQWTFSV_PORT/${safe_pattern}/g" $directory/fortress/port1.cfg
+sed -i "s/CFORTSV_PORT/${safe_pattern}/g" $directory/fortress/port1.cfg
 # Fix /qtv/qtv.cfg
 echo "qtv $hostdns:$port" >> $directory/qtv/qtv.cfg
 # Fix start_servers.sh script
