@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Classic Fortress Installer Script v1.0 (for Linux)
+# Classic Fortress Installer Script (for Linux)
 # by Empezar & dimman
 
 defaultdir="~/cfortsv"
@@ -24,8 +24,8 @@ which unzip >/dev/null || error "The package 'unzip' is not installed. Please in
 which curl >/dev/null || error "The package 'curl' is not installed. Please install it and run the installation again."
 
 echo
-echo "Welcome to the Classic Fortress v1.0 installation"
-echo "========================================"
+echo "Welcome to the Classic Fortress Server installation"
+echo "==================================================="
 echo
 echo "Press ENTER to use [default] option."
 echo
