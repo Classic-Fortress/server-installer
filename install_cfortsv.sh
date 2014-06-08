@@ -155,17 +155,17 @@ echo;echo
 # Download all the packages
 echo "=== Downloading ==="
 wget --inet4-only -O qsw106.zip $mirror/qsw106.zip || error "Failed to download $mirror/qsw106.zip"
-wget --inet4-only -O qwtf-sv-gpl.zip $mirror/qwtf-sv-gpl.zip || error "Failed to download $mirror/qwtf-sv-gpl.zip"
-wget --inet4-only -O qwtf-sv-non-gpl.zip $mirror/qwtf-sv-non-gpl.zip || error "Failed to download $mirror/qwtf-sv-non-gpl.zip"
-wget --inet4-only -O qwtf-sv-configs.zip $mirror/qwtf-sv-configs.zip || error "Failed to download $mirror/qwtf-sv-configs.zip"
-wget --inet4-only -O qwtf-sv-maps.zip $mirror/qwtf-sv-maps.zip || error "Failed to download $mirror/qwtf-sv-maps.zip"
-wget --inet4-only -O qwtf-sv-bin-x86.zip $mirror/qwtf-sv-bin-x86.zip || error "Failed to download $mirror/qwtf-sv-bin-x86.zip"
+wget --inet4-only -O cfortsv-gpl.zip $mirror/cfortsv-gpl.zip || error "Failed to download $mirror/cfortsv-gpl.zip"
+wget --inet4-only -O cfortsv-non-gpl.zip $mirror/cfortsv-non-gpl.zip || error "Failed to download $mirror/cfortsv-non-gpl.zip"
+wget --inet4-only -O cfortsv-configs.zip $mirror/cfortsv-configs.zip || error "Failed to download $mirror/cfortsv-configs.zip"
+wget --inet4-only -O cfortsv-maps.zip $mirror/cfortsv-maps.zip || error "Failed to download $mirror/cfortsv-maps.zip"
+wget --inet4-only -O cfortsv-bin-x86.zip $mirror/cfortsv-bin-x86.zip || error "Failed to download $mirror/cfortsv-bin-x86.zip"
 
 [ -s "qsw106.zip" ] || error "Downloaded qwsv106.zip but file is empty?!"
-[ -s "qwtf-sv-gpl.zip" ] || error "Downloaded qwtf-sv-gpl.zip but file is empty?!"
-[ -s "qwtf-sv-non-gpl.zip" ] || error "Downloaded qwtf-sv-non-gpl.zip but file is empty?!"
-[ -s "qwtf-sv-configs.zip" ] || error "Downloaded qwtf-sv-configs.zip but file is empty?!"
-[ -s "qwtf-sv-maps.zip" ] || error "Downloaded qwtf-sv-maps.zip but file is empty?!"
+[ -s "cfortsv-gpl.zip" ] || error "Downloaded cfortsv-gpl.zip but file is empty?!"
+[ -s "cfortsv-non-gpl.zip" ] || error "Downloaded cfortsv-non-gpl.zip but file is empty?!"
+[ -s "cfortsv-configs.zip" ] || error "Downloaded cfortsv-configs.zip but file is empty?!"
+[ -s "cfortsv-maps.zip" ] || error "Downloaded cfortsv-maps.zip but file is empty?!"
 
 
 # Get remote IP address
@@ -181,15 +181,15 @@ echo "=== Installing ==="
 printf "* Extracting Quake Shareware..."
 (unzip -qqo qsw106.zip ID1/PAK0.PAK 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress setup files (1 of 2)..."
-(unzip -qqo qwtf-sv-gpl.zip 2>/dev/null && echo done) || echo fail
+(unzip -qqo cfortsv-gpl.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress setup files (2 of 2)..."
-(unzip -qqo qwtf-sv-non-gpl.zip 2>/dev/null && echo done) || echo fail
+(unzip -qqo cfortsv-non-gpl.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress binaries..."
-(unzip -qqo qwtf-sv-bin-x86.zip 2>/dev/null && echo done) || echo fail
+(unzip -qqo cfortsv-bin-x86.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress configuration files..."
-(unzip -qqo qwtf-sv-configs.zip 2>/dev/null && echo done) || echo fail
+(unzip -qqo cfortsv-configs.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress maps..."
-(unzip -qqo qwtf-sv-maps.zip 2>/dev/null && echo done) || echo fail
+(unzip -qqo cfortsv-maps.zip 2>/dev/null && echo done) || echo fail
 echo
 
 # Rename files
@@ -199,7 +199,7 @@ printf "* Renaming files..."
 
 # Remove distribution files
 printf "* Removing distribution files..."
-(rm -rf $directory/qsw106.zip $directory/qwtf-sv-gpl.zip $directory/qwtf-sv-non-gpl.zip $directory/qwtf-sv-configs.zip $directory/qwtf-sv-maps.zip $directory/qwtf-sv-bin-x86.zip $directory/cfort.ini && echo done) || echo fail
+(rm -rf $directory/qsw106.zip $directory/cfortsv-gpl.zip $directory/cfortsv-non-gpl.zip $directory/cfortsv-configs.zip $directory/cfortsv-maps.zip $directory/cfortsv-bin-x86.zip $directory/cfort.ini && echo done) || echo fail
 
 # Convert DOS files to UNIX
 printf "* Converting DOS files to UNIX..."
