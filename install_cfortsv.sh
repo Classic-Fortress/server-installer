@@ -174,8 +174,8 @@ fi
 
 # Download configuration files
 mkdir fortress
-[ "$qtv" -eq "y" ] || mkdir qtv
-[ "$qwfwd" -eq "y" ] || mkdir qwfwd
+[ "$qtv" == "y" ] || mkdir qtv
+[ "$qwfwd" == "y" ] || mkdir qwfwd
 wget --inet4-only -O fortress/fortress.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/fortress.cfg || error "Failed to download fortress/fortress.cfg"
 wget --inet4-only -O fortress/mvdsv.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/mvdsv.cfg || error "Failed to download fortress/mvdsv.cfg"
 wget --inet4-only -O fortress/server.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/server.cfg || error "Failed to download fortress/server.cfg"
