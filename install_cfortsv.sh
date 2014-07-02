@@ -177,8 +177,8 @@ mkdir fortress
 [ "$qtv" == "y" ] || mkdir qtv
 [ "$qwfwd" == "y" ] || mkdir qwfwd
 wget --inet4-only -O fortress/fortress.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/fortress.cfg || error "Failed to download fortress/fortress.cfg"
-wget --inet4-only -O fortress/mvdsv.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/mvdsv.cfg || error "Failed to download fortress/mvdsv.cfg"
-wget --inet4-only -O fortress/server.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/server.cfg || error "Failed to download fortress/server.cfg"
+wget --inet4-only -O qw/mvdsv.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qw/mvdsv.cfg || error "Failed to download qw/mvdsv.cfg"
+wget --inet4-only -O qw/server.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qw/server.cfg || error "Failed to download qw/server.cfg"
 wget --inet4-only -O qtv/qtv.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qtv/qtv.cfg || error "Failed to download qtv/qtv.cfg"
 wget --inet4-only -O qwfwd/qwfwd.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qwfwd/qwfwd.cfg || error "Failed to download qwfwd/qwfwd.cfg"
 wget --inet4-only -O update_binaries.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_binaries.sh || error "Failed to download update_binaries.sh"
@@ -186,8 +186,8 @@ wget --inet4-only -O update_configs.sh https://raw.githubusercontent.com/Classic
 wget --inet4-only -O update_maps.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_maps.sh || error "Failed to download update_maps.sh"
 
 [ -s "fortress/fortress.cfg" ] || error "Downloaded fortress/fortress.cfg but file is empty?!"
-[ -s "fortress/mvdsv.cfg" ] || error "Downloaded fortress/mvdsv.cfg but file is empty?!"
-[ -s "fortress/server.cfg" ] || error "Downloaded fortress/server.cfg but file is empty?!"
+[ -s "qw/mvdsv.cfg" ] || error "Downloaded qw/mvdsv.cfg but file is empty?!"
+[ -s "qw/server.cfg" ] || error "Downloaded qw/server.cfg but file is empty?!"
 [ -s "qtv/qtv.cfg" ] || error "Downloaded qtv/qtv.cfg but file is empty?!"
 [ -s "qwfwd/qwfwd.cfg" ] || error "Downloaded qwfwd/qwfwd.cfg but file is empty?!"
 [ -s "update_binaries.sh" ] || error "Downloaded update_binaries.sh but file is empty?!"
@@ -210,6 +210,8 @@ printf "* Extracting Classic Fortress setup files (1 of 2)..."
 (unzip -qqo cfortsv-gpl.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress setup files (2 of 2)..."
 (unzip -qqo cfortsv-non-gpl.zip 2>/dev/null && echo done) || echo fail
+printf "* Extracting Classic Fortress maps..."
+(unzip -qqo cfortsv-maps.zip 2>/dev/null && echo done) || echo fail
 printf "* Extracting Classic Fortress binaries..."
 if [ $(getconf LONG_BIT) = 64 ]
 then
@@ -217,8 +219,6 @@ then
 else
     (unzip -qqo cfortsv-bin-x86.zip 2>/dev/null && echo done) || echo fail
 fi
-printf "* Extracting Classic Fortress maps..."
-(unzip -qqo cfortsv-maps.zip 2>/dev/null && echo done) || echo fail
 echo
 
 # Rename files
