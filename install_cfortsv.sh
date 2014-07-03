@@ -1,10 +1,9 @@
 #!/bin/sh
 
-# Classic Fortress Installer Script (for Linux)
+# Classic Fortress Server Installer Script (for Linux)
 # by Empezar & dimman
 
 defaultdir="~/cfortsv"
-eval defaultdir=$defaultdir
 
 error() {
     printf "ERROR: %s\n" "$*"
@@ -57,74 +56,10 @@ if [ -w "$directory" ]
 then
     cd $directory
     directory=$(pwd)
+    mkdir -p ~/.cfortsv/pid
+    echo $directory > ~/.cfortsv/install_dir
 else
     error "You do not have write access to $directory. Exiting."
-fi
-
-# Hostname
-defaulthostname="Classic Fortress"
-printf "Enter a descriptive hostname [$defaulthostname]: " 
-read hostname
-[ ! -z "$hostname" ] || hostname=$defaulthostname
-
-# IP/dns
-printf "Enter your server's DNS. [use external IP]: " 
-read hostdns
-
-# Port number
-defaultport=27500
-printf "What port do you want to use for your Team Fortress server? [27500]: " 
-read port
-[ ! -z "$port" ] || port=$defaultport
-
-# Run qtv?
-printf "Do you wish to run a qtv proxy? (y/n) [y]: " 
-read qtv
-[ ! -z "$qtv" ] || qtv="y"
-
-# Run qwfwd?
-printf "Do you wish to run a qwfwd proxy? (y/n) [y]: " 
-read qwfwd
-[ ! -z "$qwfwd" ] || qwfwd="y"
-
-# Admin name
-defaultadmin=$USER
-
-printf "Who is the admin of this server? [$defaultadmin]: " 
-read admin
-[ ! -z "$admin" ] || admin=$defaultadmin
-
-# Admin email
-defaultemail="$admin@example.com"
-printf "What is the admin's e-mail? [$defaultemail]: " 
-read email
-[ ! -z "$email" ] || email=$defaultemail
-
-# Rcon
-defaultrcon="changeme"
-printf "What should the rcon password be? [$defaultrcon]: " 
-read rcon
-[ ! -z "$rcon" ] || {
-    echo
-    echo "Your rcon has been set to $defaultrcon. This is an enormous security risk."
-    echo "To change this, edit $directory/fortress/pwd.cfg"
-    echo
-    rcon=$defaultrcon
-}
-
-if [ "$qtv" = "y" ]
-then
-    # Qtv password
-    defaultqtvpass="changeme"
-    printf "What should the qtv admin password be? [$defaultqtvpass]: " 
-    read qtvpass
-    [ ! -z "$qtvpass" ] || {
-        echo
-        echo "Your qtv password has been set to $defaultqtvpass. This is not recommended."
-        echo "To change this, edit $directory/qtv/qtv.cfg"
-        echo
-        qtvpass=$defaultqtvpass
-    }
 fi
 
 # Download cfort.ini
@@ -133,11 +68,12 @@ wget --inet4-only -q -O cfort.ini https://raw.githubusercontent.com/Classic-Fort
 
 # List all the available mirrors
 echo "From what mirror would you like to download Classic Fortress?"
+mirrors=$(grep "[0-9]\{1,2\}=\".*" cfort.ini | cut -d "\"" -f2 | nl | wc -l)
 grep "[0-9]\{1,2\}=\".*" cfort.ini | cut -d "\"" -f2 | nl
 printf "Enter mirror number [random]: " 
 read mirror
 mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
-[ -n "$mirror" ] || {
+if [ -n "$mirror" && $mirrors > 1 ]; then
     echo;echo -n "* Using mirror: "
     range=$(expr$(grep "[0-9]\{1,2\}=\".*" cfort.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
     while [ -z "$mirror" ]
@@ -148,8 +84,10 @@ mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
         mirrorname=$(grep "^$number=\".*" cfort.ini | cut -d "\"" -f2)
     done
     echo "$mirrorname"
-}
-mkdir -p id1
+else
+    mirror=$(grep "^1=[fhtp]\{3,4\}://[^ ]*$" cfort.ini | cut -d "=" -f2)
+fi
+mkdir -p fortress id1 qtv qw qwfwd
 echo;echo
 
 # Download all the packages
@@ -173,9 +111,6 @@ fi
 [ -s "cfortsv-maps.zip" ] || error "Downloaded cfortsv-maps.zip but file is empty?!"
 
 # Download configuration files
-mkdir fortress
-[ "$qtv" == "y" ] || mkdir qtv
-[ "$qwfwd" == "y" ] || mkdir qwfwd
 wget --inet4-only -O fortress/fortress.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/fortress.cfg || error "Failed to download fortress/fortress.cfg"
 wget --inet4-only -O qw/mvdsv.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qw/mvdsv.cfg || error "Failed to download qw/mvdsv.cfg"
 wget --inet4-only -O qw/server.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qw/server.cfg || error "Failed to download qw/server.cfg"
@@ -184,21 +119,21 @@ wget --inet4-only -O qwfwd/qwfwd.cfg https://raw.githubusercontent.com/Classic-F
 wget --inet4-only -O update_binaries.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_binaries.sh || error "Failed to download update_binaries.sh"
 wget --inet4-only -O update_configs.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_configs.sh || error "Failed to download update_configs.sh"
 wget --inet4-only -O update_maps.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_maps.sh || error "Failed to download update_maps.sh"
+[ -s "fortress/config.cfg" ] || wget --inet4-only -O fortress/config.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/config.cfg || error "Failed to download fortress/config.cfg"
+[ -s "qtv/config.cfg" ] || wget --inet4-only -O qtv/config.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qtv/config.cfg || error "Failed to download qtv/config.cfg"
+[ -s "qwfwd/config.cfg" ] || wget --inet4-only -O qwfwd/config.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qwfwd/config.cfg || error "Failed to download qwfwd/config.cfg"
 
 [ -s "fortress/fortress.cfg" ] || error "Downloaded fortress/fortress.cfg but file is empty?!"
+[ -s "fortress/config.cfg" ] || error "Downloaded fortress/config.cfg but file is empty?!"
 [ -s "qw/mvdsv.cfg" ] || error "Downloaded qw/mvdsv.cfg but file is empty?!"
 [ -s "qw/server.cfg" ] || error "Downloaded qw/server.cfg but file is empty?!"
+[ -s "qtv/config.cfg" ] || error "Downloaded qtv/config.cfg but file is empty?!"
 [ -s "qtv/qtv.cfg" ] || error "Downloaded qtv/qtv.cfg but file is empty?!"
+[ -s "qwfwd/config.cfg" ] || error "Downloaded qwfwd/config.cfg but file is empty?!"
 [ -s "qwfwd/qwfwd.cfg" ] || error "Downloaded qwfwd/qwfwd.cfg but file is empty?!"
 [ -s "update_binaries.sh" ] || error "Downloaded update_binaries.sh but file is empty?!"
 [ -s "update_configs.sh" ] || error "Downloaded update_configs.sh but file is empty?!"
 [ -s "update_maps.sh" ] || error "Downloaded update_maps.sh but file is empty?!"
-
-# Get remote IP address
-echo "Resolving external IP address..."
-echo
-remote_ip=$(curl http://myip.dnsomatic.com)
-[ -n "$hostdns" ] || hostdns=$remote_ip
 
 echo
 
@@ -227,8 +162,15 @@ printf "* Renaming files..."
 (mv $directory/ID1/PAK0.PAK $directory/id1/pak0.pak 2>/dev/null && rm -rf $directory/ID1 && echo done) || echo fail
 
 # Remove distribution files
-printf "* Removing distribution files..."
+printf "* Removing setup files..."
 (rm -rf $directory/qsw106.zip $directory/cfortsv-gpl.zip $directory/cfortsv-non-gpl.zip $directory/cfortsv-maps.zip $directory/cfortsv-bin-x86.zip $directory/cfortsv-bin-x64.zip $directory/cfort.ini && echo done) || echo fail
+
+# Create symlinks
+printf "* Creating symlinks to configuration files..."
+[ -s ~/.cfortsv/server.conf ] || ln -s $directory/fortress/config.cfg ~/.cfortsv/server.conf
+[ -s ~/.cfortsv/qtv.conf ] || ln -s $directory/qtv/config.cfg ~/.cfortsv/qtv.conf
+[ -s ~/.cfortsv/qwfwd.conf ] || ln -s $directory/qwfwd/config.cfg ~/.cfortsv/qwfwd.conf
+echo "done"
 
 # Convert DOS files to UNIX
 printf "* Converting DOS files to UNIX..."
@@ -249,131 +191,10 @@ chmod -f +x $directory/fortress/mvdfinish.qws 2>/dev/null
 chmod -f +x $directory/qtv/qtv.bin 2>/dev/null
 chmod -f +x $directory/qwfwd/qwfwd.bin 2>/dev/null
 chmod -f +x $directory/*.sh 2>/dev/null
-chmod -f +x $directory/run/*.sh 2>/dev/null
 echo "done"
-
-# Update configuration files
-printf "* Updating configuration files..."
-mkdir -p ~/.cfortsv
-echo $directory > ~/.cfortsv/install_dir
-echo $hostname > ~/.cfortsv/hostname
-echo $hostdns > ~/.cfortsv/hostdns
-echo $remote_ip > ~/.cfortsv/ip
-echo "$admin <$email>" > ~/.cfortsv/admin
-#/start_servers.sh
-safe_pattern=$(printf "%s\n" "$directory" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/CFORTSV_PATH/${safe_pattern}/g" $directory/start_servers.sh
-#/ktx/pwd.cfg
-safe_pattern=$(printf "%s\n" "$rcon" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/CFORTSV_RCON/${safe_pattern}/g" $directory/fortress/pwd.cfg
-#/qtv/qtv.cfg
-if [ "$qtv" = "y" ]
-then
-    safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-    sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/qtv/qtv.cfg
-    safe_pattern=$(printf "%s\n" "$qtvpass" | sed 's/[][\.*^$/]/\\&/g')
-    sed -i "s/CFORTSV_QTVPASS/${safe_pattern}/g" $directory/qtv/qtv.cfg
-    cd qtv
-    ln -s ../fortress/demos demos
-fi
-#/qwfwd/qwfwd.cfg
-if [ "$qwfwd" = "y" ]
-then
-        safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-        sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/qwfwd/qwfwd.cfg
-fi
-echo "done"
-
-printf "* Setting up shell scripts..."
-# Fix shell scripts
-safe_pattern=$(printf "%s\n" "./mvdsv -port $port -game fortress" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/CFORTSV_RUN_MVDSV/${safe_pattern}/g" $directory/run/fortress.sh
-# Fix /fortress/port1.cfg
-safe_pattern=$(printf "%s\n" "$hostname" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/CFORTSV_HOSTNAME/${safe_pattern}/g" $directory/fortress/port1.cfg
-safe_pattern=$(printf "%s\n" "$admin <$email>" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/CFORTSV_ADMIN/${safe_pattern}/g" $directory/fortress/port1.cfg
-safe_pattern=$(printf "%s\n" "$remote_ip:$port" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/CFORTSV_IP/${safe_pattern}/g" $directory/fortress/port1.cfg
-safe_pattern=$(printf "%s\n" "$port" | sed 's/[][\.*^$/]/\\&/g')
-sed -i "s/CFORTSV_PORT/${safe_pattern}/g" $directory/fortress/port1.cfg
-# Fix /qtv/qtv.cfg
-echo "qtv $hostdns:$port" >> $directory/qtv/qtv.cfg
-# Fix start_servers.sh script
-echo >> $directory/start_servers.sh
-echo "printf \"* Starting Team Fortress server (port $port)...\"" >> $directory/start_servers.sh
-echo "if ps ax | grep -v grep | grep \"mvdsv -port $port\" > /dev/null" >> $directory/start_servers.sh
-echo "then" >> $directory/start_servers.sh
-echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-echo "else" >> $directory/start_servers.sh
-echo "./run/fortress.sh > /dev/null &" >> $directory/start_servers.sh
-echo "echo \"[OK]\"" >> $directory/start_servers.sh
-echo "fi" >> $directory/start_servers.sh
-# Fix stop_servers.sh script
-echo >> $directory/stop_servers.sh
-echo "# Kill $port" >> $directory/stop_servers.sh
-echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/fortress.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-echo "pid=\`ps ax | grep -v grep | grep \"mvdsv -port $port\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-i=$((i+1))
-echo "done"
-
-# Add QTV
-if [ "$qtv" = "y" ]
-then
-    printf "* Adding qtv to start/stop scripts..."
-    # start_servers.sh
-    echo >> $directory/start_servers.sh
-    echo "printf \"* Starting qtv (port 28000)...\"" >> $directory/start_servers.sh
-    echo "if ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" > /dev/null" >> $directory/start_servers.sh
-    echo "then" >> $directory/start_servers.sh
-    echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-    echo "else" >> $directory/start_servers.sh
-    echo "./run/qtv.sh > /dev/null &" >> $directory/start_servers.sh
-    echo "echo \"[OK]\"" >> $directory/start_servers.sh
-    echo "fi" >> $directory/start_servers.sh
-    # stop_servers.sh
-    echo >> $directory/stop_servers.sh
-    echo "# Kill QTV" >> $directory/stop_servers.sh
-    echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qtv.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-    echo "pid=\`ps ax | grep -v grep | grep \"qtv.bin +exec qtv.cfg\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-    echo "done"
-else
-    printf "* Removing qtv files..."
-    (rm -rf $directory/qtv $directory/run/qtv.sh && echo done) || echo fail
-fi
-
-# Add/remove qwfwd
-if [ "$qwfwd" = "y" ]
-then
-    # start_servers.sh
-        echo -n "* Adding qwfwd to start/stop scripts..."
-        echo >> $directory/start_servers.sh
-        echo "echo -n \"* Starting qwfwd (port 30000)...\"" >> $directory/start_servers.sh
-        echo "if ps ax | grep -v grep | grep \"qwfwd.bin\" > /dev/null" >> $directory/start_servers.sh
-        echo "then" >> $directory/start_servers.sh
-        echo "echo \"[ALREADY RUNNING]\"" >> $directory/start_servers.sh
-        echo "else" >> $directory/start_servers.sh
-        echo "./run/qwfwd.sh > /dev/null &" >> $directory/start_servers.sh
-        echo "echo \"[OK]\"" >> $directory/start_servers.sh
-        echo "fi" >> $directory/start_servers.sh
-        # stop_servers.sh
-    echo >> $directory/stop_servers.sh
-    echo "# Kill QWFWD" >> $directory/stop_servers.sh
-    echo "pid=\`ps ax | grep -v grep | grep \"/bin/sh ./run/qwfwd.sh\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-    echo "pid=\`ps ax | grep -v grep | grep \"qwfwd.bin\" | awk '{print \$1}'\`" >> $directory/stop_servers.sh
-    echo "if [ \"\$pid\" != \"\" ]; then kill -9 \$pid; fi;" >> $directory/stop_servers.sh
-        echo "done"
-else
-    printf "* Removing qwfwd files..."
-        (rm -rf $directory/qwfwd $directory/run/qwfwd.sh && echo done) || echo fail
-fi
 
 echo;echo "To make sure your servers are always running, type \"crontab -e\" and add the following:"
-echo;echo "*/10 * * * * $directory/start_servers.sh >/dev/null 2>&1"
-echo;echo "Installation complete. Please read the README in $directory."
+echo;echo "*/3 * * * * $directory/start_servers.sh --silent"
+echo;echo "Please edit server.conf, qtv.conf and qwfwd.conf in ~/.cfortsv before continuing!"
+echo;echo "Installation complete!"
 echo
