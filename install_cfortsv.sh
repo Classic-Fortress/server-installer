@@ -119,6 +119,8 @@ wget --inet4-only -O qwfwd/qwfwd.cfg https://raw.githubusercontent.com/Classic-F
 wget --inet4-only -O update_binaries.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_binaries.sh || error "Failed to download update_binaries.sh"
 wget --inet4-only -O update_configs.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_configs.sh || error "Failed to download update_configs.sh"
 wget --inet4-only -O update_maps.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/update/update_maps.sh || error "Failed to download update_maps.sh"
+wget --inet4-only -O start_servers.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/run/start_servers.sh || error "Failed to download start_servers.sh"
+wget --inet4-only -O stop_servers.sh https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/run/stop_servers.sh || error "Failed to download stop_servers.sh"
 [ -s "fortress/config.cfg" ] || wget --inet4-only -O fortress/config.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/fortress/config.cfg || error "Failed to download fortress/config.cfg"
 [ -s "qtv/config.cfg" ] || wget --inet4-only -O qtv/config.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qtv/config.cfg || error "Failed to download qtv/config.cfg"
 [ -s "qwfwd/config.cfg" ] || wget --inet4-only -O qwfwd/config.cfg https://raw.githubusercontent.com/Classic-Fortress/server-scripts/master/config/qwfwd/config.cfg || error "Failed to download qwfwd/config.cfg"
@@ -134,6 +136,8 @@ wget --inet4-only -O update_maps.sh https://raw.githubusercontent.com/Classic-Fo
 [ -s "update_binaries.sh" ] || error "Downloaded update_binaries.sh but file is empty?!"
 [ -s "update_configs.sh" ] || error "Downloaded update_configs.sh but file is empty?!"
 [ -s "update_maps.sh" ] || error "Downloaded update_maps.sh but file is empty?!"
+[ -s "start_servers.sh" ] || error "Downloaded start_servers.sh but file is empty?!"
+[ -s "stop_servers.sh" ] || error "Downloaded stop_servers.sh but file is empty?!"
 
 echo
 
