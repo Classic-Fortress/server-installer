@@ -1,5 +1,5 @@
-server-installer
-================
+Classic Fortress Server Installer for Linux
+===========================================
 
 How to install:
 
