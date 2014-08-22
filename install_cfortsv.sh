@@ -1,8 +1,8 @@
 #!/bin/sh
 
-##########################################
-## CLASSIC FORTRESS INSTALLATION SCRIPT ##
-##########################################
+#################################################
+## CLASSIC FORTRESS SERVER INSTALLATION SCRIPT ##
+#################################################
 
 ######################
 ##  INITIALIZATION  ##
@@ -54,7 +54,7 @@ curl --silent --output $tmpdir/cfort.ini https://raw.githubusercontent.com/Class
 ######################
 
 # select install directory
-printf "Where do you want to install Classic Fortress? [$defaultdir]: " 
+printf "Where do you want to install Classic Fortress server? [$defaultdir]: "
 read installdir
 eval installdir=$installdir
 
@@ -211,13 +211,13 @@ iffailed "Could not give game files the appropriate permissions. Perhaps you hav
 mkdir -p $installdir
 cp -a $tmpdir/game/* $installdir/ 2>/dev/null || fail=1
 
-iffailed "Could not move Classic Fortress to '$installdir'. Perhaps you have some permission problems." || printf "."
+iffailed "Could not move Classic Fortress server to '$installdir'. Perhaps you have some permission problems." || printf "."
 
 # move settings to settings dir
 mkdir -p $settingsdir
 mv -n $tmpdir/settings/* $settingsdir/ 2>/dev/null || fail=1
 
-iffailed "Could not move Classic Fortress settings to '$settingsdir'. Perhaps you have some permission problems." || printf "."
+iffailed "Could not move Classic Fortress server settings to '$settingsdir'. Perhaps you have some permission problems." || printf "."
 
 # write install directory to install_dir
 echo $installdir > $settingsdir/install_dir 2>/dev/null || fail=1
