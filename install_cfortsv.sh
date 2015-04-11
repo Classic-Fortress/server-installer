@@ -144,6 +144,7 @@ curl --silent --output $tmpdir/game/getmap.sh $github/update/getmap.sh && printf
 curl --silent --output $tmpdir/game/update_binaries.sh $github/update/update_binaries.sh && printf "." || fail=1
 curl --silent --output $tmpdir/game/update_configs.sh $github/update/update_configs.sh && printf "." || fail=1
 curl --silent --output $tmpdir/game/update_maps.sh $github/update/update_maps.sh && printf "." || fail=1
+curl --silent --output $tmpdir/game/rotate_logs.sh $github/run/rotate_logs.sh && printf "." || fail=1
 curl --silent --output $tmpdir/game/start_servers.sh $github/run/start_servers.sh && printf "." || fail=1
 curl --silent --output $tmpdir/game/stop_servers.sh $github/run/stop_servers.sh && printf "." || fail=1
 curl --silent --output $tmpdir/settings/server.conf $github/config/fortress/config.cfg && printf "." || fail=1
@@ -161,6 +162,7 @@ iffailed "Could not download configuration files. Try again later."
 [ -s $tmpdir/game/update_binaries.sh ] || fail=1
 [ -s $tmpdir/game/update_configs.sh ] || fail=1
 [ -s $tmpdir/game/update_maps.sh ] || fail=1
+[ -s $tmpdir/game/rotate_logs.sh ] || fail=1
 [ -s $tmpdir/game/start_servers.sh ] || fail=1
 [ -s $tmpdir/game/stop_servers.sh ] || fail=1
 [ -s $tmpdir/settings/server.conf ] || fail=1
